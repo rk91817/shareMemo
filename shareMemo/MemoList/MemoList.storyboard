@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22155" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="eEZ-pS-Nrv">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22131"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Memo List View Controller-->
+        <scene sceneID="elz-Vy-LbY">
+            <objects>
+                <viewController storyboardIdentifier="MemoListViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="eEZ-pS-Nrv" customClass="MemoListViewController" customModule="shareMemo" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="sLv-Pf-b3Y">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="p1e-hC-7B6">
+                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="CVD-A5-9yM"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="CVD-A5-9yM" firstAttribute="trailing" secondItem="p1e-hC-7B6" secondAttribute="trailing" id="7p8-M3-vNi"/>
+                            <constraint firstItem="p1e-hC-7B6" firstAttribute="top" secondItem="CVD-A5-9yM" secondAttribute="top" id="VYa-UV-tUC"/>
+                            <constraint firstItem="p1e-hC-7B6" firstAttribute="leading" secondItem="CVD-A5-9yM" secondAttribute="leading" id="XUO-8z-CYw"/>
+                            <constraint firstItem="CVD-A5-9yM" firstAttribute="bottom" secondItem="p1e-hC-7B6" secondAttribute="bottom" id="ilU-Si-pHk"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="uiB-AT-s8Y"/>
+                    <connections>
+                        <outlet property="memoListTableView" destination="p1e-hC-7B6" id="9iJ-Lr-jGF"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ODA-3S-etM" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="463" y="-116"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
