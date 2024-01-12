@@ -70,6 +70,7 @@ enum NumericValues {
     static let minPasswordLength = 6
     static let maxUsernameLength = 8
     static let maxMemonameLength = 15
+    static let memoDetailTitleFontSize: CGFloat = 18
     static let compressionQuality = 0.3
     static let memoTextUpdateInterval = 1.5
     static let minimumPressDuration = 0.5
