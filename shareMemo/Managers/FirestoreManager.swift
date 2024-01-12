@@ -239,6 +239,22 @@ final class FirestoreManager {
         }
     }
     
+    func updateMemoName(memo: Memo, newName: String, completion: @escaping (Result<String, Error>) -> Void) {
+        guard let memoId = memo.id else {
+            completion(.failure(AppError.someError))
+            return
+        }
+        let memoRef = Firestore.firestore().collection(Collections.memos).document(memoId)
+        let updateData: [String: Any] = [Fields.name: newName]
+        memoRef.updateData(updateData) { error in
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                completion(.success((newName)))
+            }
+        }
+    }
+    
     func createMemo(friendUid: String, memoName: String, completion: @escaping (Result<Void, Error>) -> Void) {
         guard let currentUserUid = Auth.auth().currentUser?.uid else {
             completion(.failure(AppError.someError))

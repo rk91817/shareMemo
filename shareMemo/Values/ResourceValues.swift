@@ -29,6 +29,14 @@ enum NavigationBarTitle {
     static let memo = "メモ"
 }
 
+enum TextValues {
+    static let fetching = "取得中..."
+    static let changeName = "名前変更"
+    static let empty = ""
+    static let requestForNewMemoNameInput = "さんとのメモ名を入力してください"
+    static let requestForChangeMemoNameInput = "新しいメモの名前を入力してください\n（15文字以内）"
+}
+
 enum BarButtonIcons {
     static let gear = "gear"
     static let search = "magnifyingglass"
@@ -44,12 +52,6 @@ enum URLs {
 enum ImageNames {
     static let defaultImage = "defaultImage"
     static let noImage = "noImage"
-}
-
-enum TextValues {
-    static let fetching = "取得中..."
-    static let empty = ""
-    static let requestForMemoNameInput = "さんとのメモ名を入力してください"
 }
 
 enum RegexPatterns {

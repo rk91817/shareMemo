@@ -57,7 +57,7 @@ final class CreateMemoViewController: UIViewController {
         memoService?.getUser(documentId: friendId) { [weak self] result in
             switch result {
             case .success(let user):
-                self?.friendNameLabel.text = "\(user.username)\(TextValues.requestForMemoNameInput)"
+                self?.friendNameLabel.text = "\(user.username)\(TextValues.requestForNewMemoNameInput)"
             case .failure: break
             }
         }

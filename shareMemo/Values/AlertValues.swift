@@ -6,12 +6,14 @@ enum AlertTitle {
     static let updateDataError = "データの更新に失敗"
     static let searchResult = "検索結果"
     static let confirmation = "確認"
+    static let changeMemoName = "メモ名の変更"
 }
 
 enum AlertActionTitle {
     static let ok = "OK"
     static let cancel = "キャンセル"
     static let retry = "再試行"
+    static let save = "保存"
     static let delete = "削除"
 }
 

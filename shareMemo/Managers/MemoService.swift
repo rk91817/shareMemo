@@ -99,7 +99,7 @@ final class MemoService {
     private func addFriendToBothUsers(currentUser: User, newFriend: User, completion: @escaping (Result<Void, Error>) -> Void) {
         firestoreManager.createFriendToBothUsers(currentUser: currentUser, newFriend: newFriend, completion: completion)
     }
-
+    
     // ユーザーが既に自分のフレンドコレクションに存在するか確認する処理
     func checkIfUserIsAlreadyFriend (user: User, completion: @escaping (Result<Bool, Error>) -> Void) {
         guard let currentUserUid = currentUid else {
@@ -183,7 +183,7 @@ final class MemoService {
             self?.saveMemo(memo: memo, content: text)
         }
     }
-
+    
     func createMemo(friendUid: String, memoName: String, completion: @escaping (Result<Void, Error>) -> Void) {
         firestoreManager.createMemo(friendUid: friendUid, memoName: memoName) { result in
             switch result {
@@ -198,13 +198,28 @@ final class MemoService {
             }
         }
     }
-
+    
     func saveMemo(memo: Memo, content: String) {
         firestoreManager.saveMemo(memo: memo, content: content) { result in
             switch result {
             case .success: break
             case .failure(let error):
                 self.errorDidOccur?(error, .firestore)
+            }
+        }
+    }
+    
+    func updateMemoName(memo: Memo, newName: String, completion: @escaping (String) -> Void) {
+        firestoreManager.updateMemoName(memo: memo, newName: newName) { result in
+            switch result {
+            case .success(let newName):
+                completion(newName)
+            case .failure(let error):
+                if let error = error as? AppError {
+                    self.errorDidOccur?(error, .none)
+                } else {
+                    self.errorDidOccur?(error, .firestore)
+                }
             }
         }
     }

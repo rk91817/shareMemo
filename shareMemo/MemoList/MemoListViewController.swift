@@ -92,6 +92,22 @@ final class MemoListViewController: UIViewController {
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
         navigationItem.title = NavigationBarTitle.memo
     }
+    // メモ名を編集するためのアラートを表示する関数
+    private func showEditNameAlert(initialName: String, completion: @escaping (String) -> Void) {
+        let alertController = UIAlertController(title: AlertTitle.changeMemoName, message: TextValues.requestForChangeMemoNameInput, preferredStyle: .alert)
+        alertController.addTextField { textField in
+            textField.text = initialName
+            textField.delegate = self
+        }
+        let saveAction = UIAlertAction(title: AlertActionTitle.save, style: .default) { _ in
+            if let newName = alertController.textFields?.first?.text {
+                completion(newName)
+            }
+        }
+        alertController.addAction(saveAction)
+        alertController.addAction(UIAlertAction(title: AlertActionTitle.cancel, style: .cancel, handler: nil))
+        present(alertController, animated: true)
+    }
 }
 
 extension MemoListViewController: UITableViewDelegate, UITableViewDataSource {
@@ -114,5 +130,35 @@ extension MemoListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         showMemoDetailVC(for: indexPath)
         memoListTableView.deselectRow(at: indexPath, animated: true)
+    }
+    // 右スワイプでメモの名前を変更する処理
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let changeAction = UIContextualAction(style: .normal, title: TextValues.changeName) { [weak self] _, _, completionHandler in
+            guard let self = self else { return }
+            let memo = self.memos[indexPath.row], memoName = memo.name
+            self.showEditNameAlert(initialName: memoName) { newName in
+                self.memoService?.updateMemoName(memo: memo, newName: newName) { newName in
+                    self.memos[indexPath.row].name = newName
+                    DispatchQueue.main.async {
+                        tableView.reloadRows(at: [indexPath], with: .automatic)
+                    }
+                }
+            }
+            completionHandler(true)// セルのスワイプを閉じる
+        }
+        changeAction.backgroundColor = .lightGray
+        let configuration = UISwipeActionsConfiguration(actions: [changeAction])
+        configuration.performsFirstActionWithFullSwipe = false // フルスワイプを無効にする
+        return configuration
+    }
+}
+
+extension MemoListViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let currentText = textField.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+        // 更新されたテキストが15文字を超えていないかチェック
+        return updatedText.count <= NumericValues.maxMemonameLength
     }
 }
