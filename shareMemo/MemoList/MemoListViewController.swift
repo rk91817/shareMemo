@@ -49,6 +49,31 @@ final class MemoListViewController: UIViewController {
         self.navigationController?.pushViewController(memoDetailViewController, animated: true)
     }
     
+    // メモ名を編集するためのアラートを表示する関数
+    private func showEditNameAlert(initialName: String, completion: @escaping (String) -> Void) {
+        let alertController = UIAlertController(title: AlertTitle.changeMemoName, message: TextValues.requestForChangeMemoNameInput, preferredStyle: .alert)
+        alertController.addTextField { textField in
+            textField.text = initialName
+            textField.delegate = self
+        }
+        let saveAction = UIAlertAction(title: AlertActionTitle.save, style: .default) { _ in
+            if let newName = alertController.textFields?.first?.text {
+                completion(newName)
+            }
+        }
+        alertController.addAction(saveAction)
+        alertController.addAction(UIAlertAction(title: AlertActionTitle.cancel, style: .cancel, handler: nil))
+        present(alertController, animated: true)
+    }
+    
+    private func updateTableView() {
+        DispatchQueue.main.async {
+            self.memoListTableView.reloadData()
+            self.activityIndicator.stopAnimating()
+            self.refreshControl.endRefreshing()
+        }
+    }
+    
     private func setupActivityIndicator() {
         activityIndicator.center = view.center
         activityIndicator.hidesWhenStopped = true
@@ -66,15 +91,6 @@ final class MemoListViewController: UIViewController {
         memoListTableView.register(MemoListTableViewCell.nib, forCellReuseIdentifier: MemoListTableViewCell.identifier)
     }
 
-    
-    private func updateTableView() {
-        DispatchQueue.main.async {
-            self.memoListTableView.reloadData()
-            self.activityIndicator.stopAnimating()
-            self.refreshControl.endRefreshing()
-        }
-    }
-    
     private func setUpTabBarColor() {
         if let tabBar = self.tabBarController?.tabBar {
             tabBar.backgroundColor = UIColor.customWhite
@@ -91,22 +107,6 @@ final class MemoListViewController: UIViewController {
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
         navigationItem.title = NavigationBarTitle.memo
-    }
-    // メモ名を編集するためのアラートを表示する関数
-    private func showEditNameAlert(initialName: String, completion: @escaping (String) -> Void) {
-        let alertController = UIAlertController(title: AlertTitle.changeMemoName, message: TextValues.requestForChangeMemoNameInput, preferredStyle: .alert)
-        alertController.addTextField { textField in
-            textField.text = initialName
-            textField.delegate = self
-        }
-        let saveAction = UIAlertAction(title: AlertActionTitle.save, style: .default) { _ in
-            if let newName = alertController.textFields?.first?.text {
-                completion(newName)
-            }
-        }
-        alertController.addAction(saveAction)
-        alertController.addAction(UIAlertAction(title: AlertActionTitle.cancel, style: .cancel, handler: nil))
-        present(alertController, animated: true)
     }
 }
 
