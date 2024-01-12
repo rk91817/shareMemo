@@ -93,7 +93,6 @@ extension CreateMemoViewController: UITextFieldDelegate {
         // 現在のテキストの長さと変更される範囲の長さ、新しい文字列の長さを計算
         let currentTextLength = textField.text?.count ?? 0
         let newLength = currentTextLength - range.length + string.count
-
         // 新しいテキストの長さが15文字以下かどうか確認
         return newLength <= NumericValues.maxMemonameLength
     }

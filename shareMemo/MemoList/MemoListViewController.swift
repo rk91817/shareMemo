@@ -155,10 +155,10 @@ extension MemoListViewController: UITableViewDelegate, UITableViewDataSource {
 
 extension MemoListViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let currentText = textField.text ?? ""
-        guard let stringRange = Range(range, in: currentText) else { return false }
-        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
-        // 更新されたテキストが15文字を超えていないかチェック
-        return updatedText.count <= NumericValues.maxMemonameLength
+        // 現在のテキストの長さと変更される範囲の長さ、新しい文字列の長さを計算
+        let currentTextLength = textField.text?.count ?? 0
+        let newLength = currentTextLength - range.length + string.count
+        // 新しいテキストの長さが15文字以下かどうか確認
+        return newLength <= NumericValues.maxMemonameLength
     }
 }
