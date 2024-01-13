@@ -5,7 +5,7 @@ final class MemoListTableViewCell: UITableViewCell {
     static let identifier = String(describing: MemoListTableViewCell.self)
     @IBOutlet private weak var memoNameLabel: UILabel!
     @IBOutlet private weak var lastUpdateTimeLabel: UILabel!
-        
+    @IBOutlet private weak var friendNameLabel: UILabel!
     override func prepareForReuse() {
         super.prepareForReuse()
         memoNameLabel.text = nil
