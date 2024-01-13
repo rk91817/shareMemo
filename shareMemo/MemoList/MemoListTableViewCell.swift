@@ -18,8 +18,9 @@ final class MemoListTableViewCell: UITableViewCell {
         self.backgroundColor = UIColor.customWhite
     }
     
-    func configure (name: String, time: Date) {
-        self.memoNameLabel.text = name
+    func configure (memoName: String, friendName: String, time: Date) {
+        self.memoNameLabel.text = memoName
+        self.friendNameLabel.text = friendName
         self.lastUpdateTimeLabel.text = dateFormatterForDateLabel(date: time)
         self.backgroundColor = UIColor.customWhite
     }

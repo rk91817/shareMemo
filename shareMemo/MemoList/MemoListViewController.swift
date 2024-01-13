@@ -3,6 +3,7 @@ import UIKit
 
 final class MemoListViewController: UIViewController {
     private var memos = [Memo]()
+    private var memoAndFriendInfo: [(Memo, User)] = []// memoとメモ相手のフレンドのユーザー情報のタプル
     var memoService: MemoService?
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private let refreshControl = UIRefreshControl()
@@ -26,10 +27,15 @@ final class MemoListViewController: UIViewController {
     private func setupMemoServiceLatestMemosHandlers() {
         memoService?.memosDidChange = { [weak self] memos in
             self?.memos = memos
-            self?.updateTableView()
+            Task {
+                // メモ相手のフレンドのユーザー情報を取得する処理
+                await self?.getFriendsDetails()
+                DispatchQueue.main.async {
+                    self?.updateTableView()
+                }
+            }
         }
     }
-    
     // firestoreからメモデータを取得
     @objc private func fetchData() {
         // refreshControlがリフレッシュ中でない場合のみ、activityIndicatorを表示する
@@ -37,6 +43,28 @@ final class MemoListViewController: UIViewController {
             self.activityIndicator.startAnimating()
         }
         memoService?.getLatestMemos()
+    }
+    // メモ相手のフレンドのユーザー情報を並列で取得する処理
+    private func getFriendsDetails() async {
+        guard let memoService = memoService, let currentUid = memoService.currentUid else { return }
+        do {
+            try await withThrowingTaskGroup(of: (Memo, User).self) { group in
+                for memo in self.memos {
+                    // memo.members配列のうち自分ではない相手のUIDを取得
+                    guard let friendUid = memo.members.first(where: { $0 != currentUid }) else { return }
+                    group.addTask {
+                        let userDetails = try await memoService.getUser(documentId: friendUid)
+                        return (memo, userDetails)
+                    }
+                }
+                // 各タスクの結果を受け取り、memoAndFriendInfoに格納
+                for try await (memo, userDetails) in group {
+                    self.memoAndFriendInfo.append((memo, userDetails))
+                }
+            }
+        } catch {
+            self.showErrorAlert(error: error, memoService: memoService, managerType: .firestore)
+        }
     }
     
     private func showMemoDetailVC(for indexPath: IndexPath) {
@@ -48,7 +76,6 @@ final class MemoListViewController: UIViewController {
         memoDetailViewController.hidesBottomBarWhenPushed = true
         self.navigationController?.pushViewController(memoDetailViewController, animated: true)
     }
-    
     // メモ名を編集するためのアラートを表示する関数
     private func showEditNameAlert(initialName: String, completion: @escaping (String) -> Void) {
         let alertController = UIAlertController(title: AlertTitle.changeMemoName, message: TextValues.requestForChangeMemoNameInput, preferredStyle: .alert)
@@ -122,9 +149,15 @@ extension MemoListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = memoListTableView.dequeueReusableCell(withIdentifier: MemoListTableViewCell.identifier, for: indexPath) as? MemoListTableViewCell else { return UITableViewCell() }
-        
-            cell.configure(name: memos[indexPath.row].name, time: memos[indexPath.row].latestUpdate)
-            return cell
+        let indexPathMemo = memos[indexPath.row]
+        // memoAndFriendInfoから、indexPath.row番目のmemoに対応するUser情報を探して取得
+        let IndexPathFriendInfo = memoAndFriendInfo.first { memo, _ in
+            memo.id == indexPathMemo.id
+        }
+        // メモ相手の名前を取得
+        let friendName = IndexPathFriendInfo?.1.username ?? TextValues.empty
+        cell.configure(memoName: indexPathMemo.name, friendName: friendName, time: indexPathMemo.latestUpdate)
+        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
